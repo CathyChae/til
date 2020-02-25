@@ -1,11 +1,13 @@
-# til
+# TIL
 Today I Learned
+
+[Markdown](https://guides.github.com/features/mastering-markdown/)
 
 Headers
 
-# This is an <h1> tag
-## This is an <h2> tag
-###### This is an <h6> tag
+# H1 header <h1> tag
+## H2 header <h2> tag
+###### H6 header <h6> tag
 
 Emphasis
 
