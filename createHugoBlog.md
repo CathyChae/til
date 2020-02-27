@@ -89,11 +89,11 @@ Web Server is available at http://localhost:1313/ (bind address 127.0.0.1)
 
    * 블로그 내용 깃에 올리기 완료
      
-    `cd ..`
+    cd ..
     
-    `git commit -m “initial commit"`
+    git commit -m “initial commit"
     
-    `git push origin master`  
+    git push origin master
    
     
   
