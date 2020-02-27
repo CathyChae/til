@@ -26,10 +26,18 @@
 
     `cd  ~/<프로젝트명>`
     
-   
-   * shell 스크립트 파일 생성
+* shell 스크립트 파일 생성
+
+     `vi deploy.sh`
+     
+* 스크립트 실행을 위한 권한 설정
+
+   `chmod +x deploy.sh`
+
+* shell 스크립트 실행
   
-    `vi deploy.sh`
+    `./deploy.sh`
+
 
 
 ```
@@ -71,10 +79,4 @@ git commit -m "$msg"
 git push origin master
 ```
  
-   * 스크립트 실행을 위한 권한 설정
   
-    `chmod +x deploy.sh`
-
-   * shell 스크립트 실행
-  
-    `./deploy.sh`
