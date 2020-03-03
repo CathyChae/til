@@ -61,3 +61,101 @@ DI 를 이용하면 다음과 같은 이점을 얻을 수 있습니다.
 3. 테스트의 용이 : 클래스 테스트 시, 이 클래스의 의존성을 관리할 필요가 없기 때문에 테스트할 수 있는 다른 모든 케이스들을 다르게 실행해 볼 수 있습니다.
 
 DI 의 장점을 모두 이해하기 위해서, 당신은 수동으로 DI 를 [https://developer.android.com/training/dependency-injection/manual](https://developer.android.com/training/dependency-injection/manual) 에 따라 적용해봐야 합니다.
+
+
+
+class Car {
+    
+        private Engine engine = new Engine();
+    
+        public void start() {
+            engine.start();
+        }
+    }
+    
+    
+    class MyApp {
+        public static void main(String[] args) {
+            Car car = new Car();
+            car.start();
+        }
+    }
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b7ae9e90-c237-4f8f-a551-6844efbb3675/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/b7ae9e90-c237-4f8f-a551-6844efbb3675/Untitled.png)
+
+ 이 예제는 DI 예제가 아닙니다 왜냐하면 Car 클래스가 자신의 Engine 을 생성합니다. 이 것은 다음과 같은 이유로 문제가 있습니다
+
+- Car, Engine 은 서로 강력하게 묶여 있습니다. Car 인스턴스는  한 가지 유형의 Engine을 사용하므로 하위 클래스나 대체 구현을 쉽게 사용할 수 없습니다. Car 자체가 Engine 을 구성하는 경우 Gas 및 Electric 유형의 엔진에 동일한 Car 를 재사용하는 대신 두가지 유형의 Car 를 작성해야 합니다.
+
+- Engine 타입을 사용했고 서브 클래스가 없거나 쉽게 쉽게 사용되어질 변경가능한 실행이 없습니다. 만약에 Car 가 자신의 Engine 을 생성한다면, 당신은 똑같은 car 를 단지 재사용하 는 것이 아니라 반드시 두종류의 Car 를 생성해야합니다.
+- Engine 에 대한 의존성은 테스트를 더욱 어렵게 만듭니다. Car 는 실제 Engine 인스턴스를 사용하므로 "Test double" 을 사용하여 다른 테스트 사례에 대한 엔진을 수정할 수 없습니다.
+- Engine 에 대한 강한 종속성은 테스트하기 어렵게 만듭니다. Car 가 실제 Engine 의 인스턴스를 사용하고 이러면
+
+    class Car {
+    
+        private final Engine engine;
+    
+        public Car(Engine engine) {
+            this.engine = engine;
+        }
+    
+        public void start() {
+            engine.start();
+        }
+    }
+    
+    
+    class MyApp {
+        public static void main(String[] args) {
+            Engine engine = new Engine();
+            Car car = new Car(engine);
+            car.start();
+        }
+    }
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e2603694-f1ed-4ed5-9efd-b11c3701b5aa/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/e2603694-f1ed-4ed5-9efd-b11c3701b5aa/Untitled.png)
+
+메인 함수가 Car 를 사용합니다. 왜냐하면 Car 는 Engine 에 의존하고 앱이 Engine 인스턴스를 생성하고나서 이것을 Car 의 인스턴스를 생성하기위해 사용합니다. DI 관점에서 바라본 이것의 장점은
+
+- Car 재사용성 : 당신은 다른 엔진의 실행을 car 에 이용할 수 있습니다. 예를들어 당신이 Engine 의 새로운 하위클래스를 정의한다면 당신이 원하는 ElectricEngine 을 Car 에 사용할 수 있습니다. 당신이 DI 를 이용한다면, 오직 필요한 것은 다른 변경없이 변경된 하위 클래스인 ElectricEngine 의 인스턴스를 Car 에 넣어주면 됩니다.
+- 테스트 용이성 : 당신은 다른 시나리오들을 더블 테스트를 이용해 테스트 할 수 있습니다. 예를들어 엔진의 테스트 더블을 만들었다면 Engine을 FakeEngine 으로 다르게 테스트할 수 있습니다.
+
+안드로이드에서 DI 를 이용하는 주요한 방식은 두가지가 있습니다.
+
+1. 생성자 주입 : 위에 말한 것이 생성자 주입입니다. 클래스의 의존성을 생성자에 넣습니다.
+2. 필드 주입 : 액티비티나 프래그먼트 같은 특정 안드로이드 프레임워크 클래스는 시스템에 의해서 초기화 되기 때문에 생성자 주입이 불가능합니다. 그래서 필드 인젝선을 이용해서 클래스가 생성된 이후에 의존성을 초기화해줍니다. 
+
+    class Car {
+    
+        private Engine engine;
+    
+        public void setEngine(Engine engine) {
+            this.engine = engine;
+        }
+    
+        public void start() {
+            engine.start();
+        }
+    }
+    
+    class MyApp {
+        public static void main(String[] args) {
+            Car car = new Car();
+            car.setEngine(new Engine());
+            car.start();
+        }
+    }
+
+자동 DI
+
+이전 예제에소는 다른 클래스의 의존성을 라이브러리 없이 직접 생성하고, 제공하고 관리했다. 이것을 수동 DI 라고 한다. Car 예제에서는 종속성이 하나만 있었지만 종속성과 클래스가 늘어날수록 종속성을 수동으로 주입하는 것이 지루할 수 있스빈다. 수동 DI 는 다음과 같은 문제가 있따
+
+- 큰 앱은, 모든 종속성을 가져와 올바르게 연결하려면 많은은 보일러플레이트 코드가 필요하다. 다중 계층 구조의 경우, 최상단 계층에서 객체를 생성하기 위해 모든 하위 레이어에 의존성을 제공해야한다. 실제 예제로 들어보면, 실제 카를 만들기 위해 엔진, 트랜스미션, 샤시 등 다른 것들이 필요하다. 그리고 엔진은 실린더와 스파크 플러그가 필요하다.
+- 만약에 생성자에서 의존성을 주입할 수 없다면 예를들어 지여뇐 초기화를 한다면 의존성 그래프를 봐야한다
+
+라이브러리는 생성시 자동으로 의존성을 제공해서 이러한 문제를 해결한다. 두가지 범주가 있는데
+
+- 런타임에 생성
+- 컴파일 타임에 생성
+
+Daggera 는 구글에서 관린하며 Java, Kotlin 그리고 안드로이드에 쓰이는 유명한 DI 라이브러리이다. Dagger는 의존성 그래프를 만들고 관리해서 앱에 쉽게 DI 를 쓸 수 있게 한다. Dagger 는 완벽하게 static 이고 컴파일 타임에 .
