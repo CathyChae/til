@@ -1,0 +1,21 @@
+
+Error in read_html(paste0(url, j)) : could not find function "read_html"
+
+> install.packages('xml2')
+
+
+Error in alexa %>% html_nodes(".review-text") %>% html_text() : 
+  could not find function "%>%"
+  
+  
+> install.packages("magrittr") # package installations are only needed the first time you use it
+> install.packages("dplyr")    # alternative installation of the %>%
+> library(magrittr) # needs to be run every time you start R and want to use %>%
+> library(dplyr)    # alternatively, this also loads %>%
+
+
+> # 4.1 Another way to double-check
+> head(A)
+     [,1] [,2]
+     
+     
